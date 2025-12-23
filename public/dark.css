@@ -1,0 +1,306 @@
+/* === WHATSAPP DARK MODE DESIGN SYSTEM === */
+:root {
+    /* WhatsApp Official Colors (Dark Mode) */
+    --wa-primary: #005C4B;
+    --wa-primary-dark: #00453A;
+    --wa-primary-light: #008069;
+    --wa-secondary: #1F2C34;
+    --wa-accent-green: #00A884;
+    --wa-accent-blue: #53BDEB;
+    --wa-accent-yellow: #FFC107;
+    --wa-accent-red: #F44336;
+    
+    /* Surface & Background */
+    --wa-background: #111B21;
+    --wa-surface: #202C33;
+    --wa-surface-secondary: #182229;
+    --wa-surface-elevated: #2A3942;
+    
+    /* Text Colors */
+    --wa-text-primary: #E9EDEF;
+    --wa-text-secondary: #8696A0;
+    --wa-text-tertiary: #667781;
+    --wa-text-on-primary: #FFFFFF;
+    
+    /* Status Colors */
+    --wa-status-online: #00A884;
+    --wa-status-typing: #009688;
+    --wa-status-offline: #667781;
+    
+    /* Message Status */
+    --wa-message-sent: #8696A0;
+    --wa-message-delivered: #53BDEB;
+    --wa-message-read: #34B7F1;
+    
+    /* Borders & Dividers */
+    --wa-border: #2A3942;
+    --wa-border-light: #222E35;
+    --wa-border-dark: #374149;
+    
+    /* Shadows (Dark mode adjustments) */
+    --wa-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --wa-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --wa-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --wa-shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* === DARK MODE OVERRIDES === */
+body {
+    background-color: var(--wa-background);
+    color: var(--wa-text-primary);
+}
+
+/* Status Bar */
+.status-bar {
+    background-color: var(--wa-background);
+}
+
+/* Splash Screen (Dark variant) */
+.splash-screen {
+    background: linear-gradient(135deg, var(--wa-background), #0C151B);
+}
+
+/* PWA Install Prompt */
+.pwa-card {
+    background: var(--wa-surface);
+    border-color: var(--wa-border);
+}
+
+.pwa-details p {
+    color: var(--wa-text-secondary);
+}
+
+.pwa-secondary {
+    background: var(--wa-surface-secondary);
+    color: var(--wa-text-secondary);
+}
+
+.pwa-secondary:hover {
+    background: var(--wa-border);
+}
+
+.pwa-close:hover {
+    background: var(--wa-border);
+    color: var(--wa-text-secondary);
+}
+
+/* Network Status */
+.network-status {
+    background: #4D3814;
+    color: var(--wa-accent-yellow);
+}
+
+/* Selection Toolbar */
+.selection-toolbar {
+    background: var(--wa-surface);
+    border-color: var(--wa-border);
+}
+
+.selection-count {
+    color: var(--wa-text-primary);
+}
+
+.selection-btn {
+    background: var(--wa-surface-secondary);
+    border-color: var(--wa-border-dark);
+    color: var(--wa-text-secondary);
+}
+
+.selection-btn:hover {
+    background: var(--wa-border);
+    color: var(--wa-text-primary);
+}
+
+/* FAB Menu */
+.fab-menu {
+    background: var(--wa-surface);
+    border-color: var(--wa-border);
+}
+
+.fab-menu-item {
+    color: var(--wa-text-primary);
+}
+
+.fab-menu-item:hover {
+    background: var(--wa-border);
+}
+
+/* Search Overlay */
+.search-overlay {
+    background: var(--wa-background);
+}
+
+.search-header {
+    background: var(--wa-background);
+    border-color: var(--wa-border);
+}
+
+.search-back:hover {
+    background: var(--wa-border);
+}
+
+.search-input {
+    background: var(--wa-surface);
+    border-color: var(--wa-border-dark);
+    color: var(--wa-text-primary);
+}
+
+.search-input:focus {
+    border-color: var(--wa-primary-light);
+    background: var(--wa-surface-secondary);
+}
+
+.search-clear:hover {
+    background: var(--wa-border);
+    color: var(--wa-text-secondary);
+}
+
+/* Scrollbar Dark Mode */
+::-webkit-scrollbar-thumb {
+    background: var(--wa-border-dark);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--wa-text-tertiary);
+}
+
+/* === DARK MODE UTILITY CLASSES === */
+.dark\:bg-surface { background: var(--wa-surface); }
+.dark\:bg-secondary { background: var(--wa-surface-secondary); }
+.dark\:text-primary { color: var(--wa-text-primary); }
+.dark\:text-secondary { color: var(--wa-text-secondary); }
+.dark\:border { border-color: var(--wa-border); }
+
+/* === PREFERS-REDUCED-MOTION === */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .splash-screen {
+        animation: none;
+    }
+    
+    .splash-logo {
+        animation: none;
+    }
+    
+    .splash-progress-bar {
+        animation: none;
+        width: 100%;
+    }
+}
+
+/* === HIGH CONTRAST MODE === */
+@media (prefers-contrast: high) {
+    :root {
+        --wa-primary: #00664C;
+        --wa-accent-green: #008F5C;
+        --wa-accent-blue: #0080CC;
+        --wa-text-primary: #000000;
+        --wa-text-secondary: #333333;
+    }
+    
+    body {
+        -webkit-font-smoothing: none;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .splash-screen {
+        background: var(--wa-primary);
+    }
+    
+    .pwa-card,
+    .fab-menu,
+    .selection-toolbar {
+        border: 2px solid currentColor;
+    }
+}
+
+/* === FORCED COLORS MODE (Windows High Contrast) === */
+@media (forced-colors: active) {
+    :root {
+        --wa-primary: CanvasText;
+        --wa-background: Canvas;
+        --wa-surface: Canvas;
+        --wa-text-primary: CanvasText;
+        --wa-border: CanvasText;
+    }
+    
+    .splash-screen {
+        background: Canvas;
+    }
+    
+    .splash-text {
+        color: CanvasText;
+    }
+    
+    .splash-progress {
+        background: CanvasText;
+        opacity: 0.2;
+    }
+    
+    .splash-progress-bar {
+        background: CanvasText;
+    }
+    
+    .status-bar {
+        background: Canvas;
+        border-bottom: 1px solid CanvasText;
+    }
+    
+    .pwa-card,
+    .fab-menu,
+    .selection-toolbar {
+        border: 1px solid CanvasText;
+        forced-color-adjust: none;
+    }
+    
+    .pwa-primary,
+    .selection-btn,
+    .fab-menu-item {
+        border: 1px solid CanvasText;
+        forced-color-adjust: none;
+    }
+}
+
+/* === DARK MODE TRANSITIONS === */
+@media (prefers-color-scheme: dark) {
+    body {
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    .app-container {
+        transition: background-color 0.3s ease;
+    }
+    
+    wa-header,
+    wa-bottom-nav,
+    wa-sidebar,
+    wa-chat-list,
+    wa-status-list,
+    wa-calls-list {
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+}
+
+/* === DARK MODE PRINT OPTIMIZATION === */
+@media print and (prefers-color-scheme: dark) {
+    body {
+        background: white !important;
+        color: black !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    * {
+        background: white !important;
+        color: black !important;
+        border-color: black !important;
+    }
+}
