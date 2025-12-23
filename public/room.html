@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>READTalk – Chat</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+    background: #f0f0f0; 
+    height:100vh; 
+    display:flex; 
+    flex-direction:column; 
+}
+
+/* === HEADER PRESISI WHATSAPP === */
+header { 
+    display:flex; 
+    align-items:center; 
+    padding:12px 16px; 
+    background:#ffffff; 
+    border-bottom:1px solid #e0e0e0; 
+    position:sticky; 
+    top:0; 
+    z-index:10;
+    height: 60px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+header button { 
+    background:none; 
+    border:none; 
+    font-size:24px; 
+    cursor:pointer; 
+    color: #333;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+header button:hover { background: #f5f5f5; }
+header .room-name { 
+    font-weight:600; 
+    font-size:16px; 
+    cursor:pointer;
+    flex: 1;
+    margin-left: 12px;
+    color: #000;
+}
+header .user-id { 
+    font-size:12px; 
+    color:#666; 
+    font-weight: 400;
+}
+
+/* === CHAT AREA === */
+.chat { 
+    flex:1; 
+    padding:16px 16px 8px; 
+    overflow-y:auto; 
+    display:flex; 
+    flex-direction:column; 
+    gap: 2px;
+}
+
+/* === BUBBLE PRESISI WHATSAPP === */
+.bubble { 
+    max-width:75%; 
+    padding: 8px 12px;
+    border-radius: 18px;
+    font-size: 14.2px;
+    line-height:1.4; 
+    word-wrap:break-word; 
+    position:relative;
+    margin-bottom: 16px;
+}
+
+/* Other person's bubble - WhatsApp style */
+.other { 
+    align-self:flex-start; 
+    background:#ffffff;
+    color:#000; 
+    border-radius: 18px 18px 18px 4px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.08);
+    margin-right: auto;
+}
+
+/* My bubble - Neutral dark gray */
+.me { 
+    align-self:flex-end; 
+    background:#2c2c2e; /* Netral gelap */
+    color:#ffffff; 
+    border-radius: 18px 18px 4px 18px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    margin-left: auto;
+}
+
+/* Emoji enhancement - tetap terlihat di dark gray */
+.me .emoji {
+    display: inline-block;
+    position: relative;
+    filter: brightness(1.1);
+}
+
+/* === TIMESTAMP PRESISI === */
+.timestamp { 
+    font-size:11px; 
+    color:rgba(255,255,255,0.7); 
+    position:absolute; 
+    bottom:-16px; 
+    right:8px;
+    white-space: nowrap;
+}
+.other .timestamp { color:rgba(0,0,0,0.5); }
+
+.read-status { 
+    font-size:11px; 
+    position:absolute; 
+    bottom:-16px; 
+    left:8px;
+}
+.me .read-status { color:rgba(255,255,255,0.7); }
+.other .read-status { color:rgba(0,0,0,0.5); }
+
+/* === INPUT AREA === */
+.input-area { 
+    display:flex; 
+    gap:8px; 
+    padding:12px 16px; 
+    background:#ffffff; 
+    border-top:1px solid #e0e0e0;
+    align-items: center;
+}
+.input-area input { 
+    flex:1; 
+    padding:12px 16px; 
+    border-radius:20px; 
+    border:1px solid #ddd; 
+    outline:none; 
+    font-size:15px; 
+    background: #f8f8f8;
+}
+.input-area button { 
+    background:#e53935; 
+    color:#fff; 
+    border:none; 
+    border-radius:50%; 
+    width:44px; 
+    height:44px; 
+    font-size:18px; 
+    cursor:pointer; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center;
+    transition: background 0.2s;
+}
+.input-area button:hover { background:#d32f2f; }
+
+.input-area button.attach-btn { 
+    background:none; 
+    color:#666; 
+    font-size:28px;
+    width: 44px;
+    height: 44px;
+}
+
+/* === EMOJI PICKER === */
+.emoji-picker { 
+    display:flex; 
+    flex-wrap:wrap; 
+    gap:8px; 
+    padding:12px; 
+    background:#fff; 
+    border-top:1px solid #ddd; 
+}
+.emoji-picker span { 
+    font-size:24px; 
+    cursor:pointer; 
+    padding: 4px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+.emoji-picker span:hover { background: #f0f0f0; }
+
+/* === ATTACHMENT MENU (WHATSAPP 3x3 GRID) === */
+.attachment-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: flex-end;
+    align-items: flex-end;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.attachment-menu {
+    background: white;
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.menu-section {
+    padding: 0 20px;
+    margin-bottom: 24px;
+}
+
+.menu-section:last-child {
+    margin-bottom: 0;
+}
+
+.menu-section-title {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+    padding-left: 8px;
+    font-weight: normal;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 8px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.menu-item:hover {
+    background-color: #f5f5f5;
+}
+
+.menu-item-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 20px;
+    color: #333;
+}
+
+.menu-item-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000;
+}
+
+.menu-item.highlighted .menu-item-text {
+    color: #e53935;
+    font-weight: 600;
+}
+
+/* === PROFILE MODAL === */
+.profile-modal { 
+    position:fixed; 
+    top:0; 
+    left:0; 
+    width:100%; 
+    height:100%; 
+    background:rgba(0,0,0,0.4); 
+    display:none; 
+    justify-content:center; 
+    align-items:center; 
+    z-index:20; 
+}
+.profile-content { 
+    background:#fff; 
+    border-radius:16px; 
+    padding:24px; 
+    width:320px; 
+    text-align:center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+.profile-content img { 
+    width:80px; 
+    height:80px; 
+    border-radius:50%; 
+    margin-bottom:12px; 
+    cursor:pointer;
+    border: 3px solid #f0f0f0;
+}
+.profile-content input { 
+    width:100%; 
+    padding:10px; 
+    margin:8px 0; 
+    border-radius:8px; 
+    border:1px solid #ddd; 
+    font-size:14px;
+}
+.profile-content button { 
+    margin-top:8px; 
+    padding:10px 16px; 
+    border:none; 
+    border-radius:8px; 
+    background:#e53935; 
+    color:#fff; 
+    cursor:pointer;
+    font-size:14px;
+    width: 100%;
+}
+.profile-content button.logout-btn {
+    background: #f5f5f5;
+    color: #666;
+    margin-top: 12px;
+}
+
+/* === SCROLLBAR === */
+.chat::-webkit-scrollbar {
+    width: 6px;
+}
+.chat::-webkit-scrollbar-track {
+    background: transparent;
+}
+.chat::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <button onclick="goBack()">←</button>
+  <div class="room-name" id="roomName" onclick="openProfile()">Chat</div>
+  <div class="user-id" id="userId"></div>
+</header>
+
+<div class="chat" id="chatBox"></div>
+
+<div class="input-area">
+  <button class="attach-btn" onclick="openAttachmentMenu()">+</button>
+  <input id="messageInput" type="text" placeholder="Ketik pesan..." />
+  <button onclick="sendMessage()">➤</button>
+</div>
+
+<div class="emoji-picker" id="emojiPicker">
+  <span>😊</span><span>😂</span><span>👍</span><span>❤️</span><span>🎉</span><span>😎</span><span>🙌</span>
+  <span>😢</span><span>😡</span><span>🎯</span><span>⭐</span><span>🔥</span><span>💯</span><span>🙏</span>
+</div>
+
+<!-- ATTACHMENT MENU (WHATSAPP STYLE) -->
+<div class="attachment-menu-overlay" id="attachmentMenu" onclick="closeAttachmentMenu(event)">
+  <div class="attachment-menu" onclick="event.stopPropagation()">
+    <div class="menu-section">
+      <div class="menu-section-title">Pesan</div>
+      <div class="menu-item" onclick="selectAttachment('document')">
+        <div class="menu-item-icon">📄</div>
+        <div class="menu-item-text">Dokumen</div>
+      </div>
+      <div class="menu-item" onclick="selectAttachment('camera')">
+        <div class="menu-item-icon">📷</div>
+        <div class="menu-item-text">Kamera</div>
+      </div>
+      <div class="menu-item" onclick="selectAttachment('gallery')">
+        <div class="menu-item-icon">🖼️</div>
+        <div class="menu-item-text">Galeri</div>
+      </div>
+      <div class="menu-item" onclick="selectAttachment('audio')">
+        <div class="menu-item-icon">🎤</div>
+        <div class="menu-item-text">Audio</div>
+      </div>
+    </div>
+    
+    <div class="menu-section">
+      <div class="menu-section-title">Pesan</div>
+      <div class="menu-item" onclick="selectAttachment('account')">
+        <div class="menu-item-icon">👤</div>
+        <div class="menu-item-text">Account details</div>
+      </div>
+      <div class="menu-item highlighted" onclick="selectAttachment('catalog')">
+        <div class="menu-item-icon">📋</div>
+        <div class="menu-item-text">Katalog</div>
+      </div>
+      <div class="menu-item" onclick="selectAttachment('quick_reply')">
+        <div class="menu-item-icon">⚡</div>
+        <div class="menu-item-text">Balasan cepat</div>
+      </div>
+    </div>
+    
+    <div class="menu-section">
+      <div class="menu-section-title">Lokasi</div>
+      <div class="menu-item" onclick="selectAttachment('contact')">
+        <div class="menu-item-icon">👥</div>
+        <div class="menu-item-text">Kontak</div>
+      </div>
+      <div class="menu-item" onclick="selectAttachment('poll')">
+        <div class="menu-item-icon">📊</div>
+        <div class="menu-item-text">Polling</div>
+      </div>
+      <div class="menu-item" onclick="selectAttachment('event')">
+        <div class="menu-item-icon">📅</div>
+        <div class="menu-item-text">Acara</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="profile-modal" id="profileModal">
+  <div class="profile-content">
+    <img id="profileAvatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=readtalk" alt="Avatar" onclick="changeAvatar()">
+    <input type="text" id="profileNameInput" placeholder="Display Name">
+    <p id="profileEmail">email@example.com</p>
+    <button onclick="saveProfile()">Simpan Perubahan</button>
+    <button onclick="closeProfile()" style="background:#f5f5f5;color:#333;">Tutup</button>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<script>
+// ===== KODE EXISTING (DARI chat.html ASLI) =====
+// Current user mock
+const currentEmail = localStorage.getItem('userEmail') || 'john.doe@example.com';
+const currentUser = emailToUser(currentEmail);
+document.getElementById("userId").innerText = currentUser.username;
+
+// Helper
+function emailToUser(email){
+  const [name] = email.split('@');
+  const displayName = name.split('.').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+  return {name: displayName, username:'@'+name, email};
+}
+
+// Rooms mock - TERHUBUNG DENGAN room.html
+const params = new URLSearchParams(window.location.search);
+const roomId = params.get("room") || 'self';
+let roomUser;
+const rooms = {
+  self: emailToUser(currentEmail),
+  user_1: emailToUser('red.biz@example.com'),
+  user_2: emailToUser('bapak.qu@example.com'),
+  user_3: emailToUser('cikal.user@example.com')
+};
+roomUser = rooms[roomId] || {name:'Unknown', username:'@unknown', email:'unknown@example.com'};
+document.getElementById('roomName').innerText = roomId==='self'?roomUser.name:roomUser.name+' '+roomUser.username;
+document.getElementById('profileEmail').innerText = roomUser.email;
+document.getElementById('profileNameInput').value = roomUser.name;
+
+// Mock messages dengan status WhatsApp-like
+const chatBox = document.getElementById('chatBox');
+let mockMessages = {
+  self:[
+    {from:'me',text:'Catatan pribadi 😊',time:'09:00',read:true, status:'read'},
+    {from:'other',text:'Ini notes untuk diri sendiri',time:'09:01',status:'sent'}
+  ],
+  user_1:[
+    {from:'other',text:'Halo 👋',time:'10:00',status:'sent'},
+    {from:'me',text:'Hai! Apa kabar? 👍',time:'10:02',read:true, status:'read'},
+    {from:'other',text:'Baik, sedang coba READTalk nih',time:'10:03',status:'sent'}
+  ],
+  user_2:[
+    {from:'other',text:'Telepon tak terjawab 😅',time:'11:00',status:'sent'},
+    {from:'me',text:'Siap, nanti aku telepon balik',time:'11:05',read:false, status:'delivered'}
+  ],
+  user_3:[
+    {from:'other',text:'Foto 📸',time:'12:00',status:'sent'},
+    {from:'me',text:'Wah keren! Terima kasih ❤️',time:'12:05',read:false, status:'delivered'},
+    {from:'me',text:'Ini link: https://readtalk.github.io',time:'12:06',read:false, status:'delivered'}
+  ]
+};
+
+// Enhanced render dengan presisi WhatsApp
+function renderMessages(){
+  chatBox.innerHTML='';
+  const messages = mockMessages[roomId] || [];
+  
+  messages.forEach(m=>{
+    const bubble = document.createElement('div');
+    bubble.className='bubble '+m.from;
+    
+    // Auto-link URLs
+    const textWithLinks = m.text.replace(
+      /(https?:\/\/[^\s]+)/g,
+      '<a href="$1" target="_blank" style="color: inherit; text-decoration: underline;">$1</a>'
+    );
+    
+    // Wrap emojis for styling
+    const textWithEmojis = textWithLinks.replace(
+      /([\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}])/gu,
+      '<span class="emoji">$1</span>'
+    );
+    
+    bubble.innerHTML = textWithEmojis;
+    
+    // Timestamp
+    const ts = document.createElement('div');
+    ts.className='timestamp';
+    ts.innerText = m.time;
+    bubble.appendChild(ts);
+    
+    // Status for my messages (WhatsApp-like)
+    if(m.from==='me'){
+      const readDiv = document.createElement('div');
+      readDiv.className='read-status';
+      
+      // WhatsApp status indicators
+      if(m.status === 'sent') readDiv.innerHTML = '✓';
+      else if(m.status === 'delivered') readDiv.innerHTML = '✓✓';
+      else if(m.status === 'read') readDiv.innerHTML = '<span style="color:#34B7F1">✓✓</span>'; // Blue for read
+      else readDiv.innerHTML = '✓';
+      
+      bubble.appendChild(readDiv);
+    }
+    
+    chatBox.appendChild(bubble);
+  });
+  
+  // Scroll to bottom
+  setTimeout(() => {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }, 100);
+}
+
+// Initial render
+renderMessages();
+
+// Send message
+const input = document.getElementById('messageInput');
+function sendMessage(){
+  const text = input.value.trim();
+  if(!text) return;
+  
+  // Add to mock messages
+  if (!mockMessages[roomId]) mockMessages[roomId] = [];
+  
+  const newMsg = {
+    from: 'me',
+    text: text,
+    time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    read: false,
+    status: 'sent'
+  };
+  
+  mockMessages[roomId].push(newMsg);
+  
+  // Render
+  renderMessages();
+  
+  // Clear input
+  input.value='';
+  input.focus();
+  
+  // Simulate reply after delay (WhatsApp-like)
+  setTimeout(() => {
+    const replies = [
+      "Oke! 👍",
+      "Terima kasih 🙏",
+      "Baik, paham",
+      "Siap! 🎯",
+      "Wah keren! 😎"
+    ];
+    
+    const randomReply = replies[Math.floor(Math.random() * replies.length)];
+    
+    const replyMsg = {
+      from: 'other',
+      text: randomReply,
+      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+      status: 'sent'
+    };
+    
+    mockMessages[roomId].push(replyMsg);
+    
+    // Update my message status to delivered
+    newMsg.status = 'delivered';
+    
+    renderMessages();
+    
+    // After another delay, update to read
+    setTimeout(() => {
+      newMsg.status = 'read';
+      newMsg.read = true;
+      renderMessages();
+    }, 1000);
+  }, 1000 + Math.random() * 2000);
+}
+
+// Enter key (Shift+Enter for new line)
+input.addEventListener('keydown', e=>{ 
+  if(e.key==='Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+// Emoji picker
+document.querySelectorAll('#emojiPicker span').forEach(e=>{
+  e.addEventListener('click', ()=>{ 
+    input.value += e.innerText; 
+    input.focus(); 
+  });
+});
+
+// Back to room.html
+function goBack(){ 
+  window.location.href='room.html'; 
+}
+
+// ===== PROFILE MODAL =====
+const profileModal = document.getElementById('profileModal');
+function openProfile(){ 
+  profileModal.style.display='flex'; 
+}
+
+function closeProfile(){ 
+  profileModal.style.display='none'; 
+}
+
+// Profile edit
+function saveProfile(){
+  const newName = document.getElementById('profileNameInput').value.trim();
+  if(newName) {
+    roomUser.name = newName;
+    // Update in rooms object
+    rooms[roomId].name = newName;
+  }
+  document.getElementById('roomName').innerText = roomId==='self'?roomUser.name:roomUser.name+' '+roomUser.username;
+  closeProfile();
+}
+
+function changeAvatar(){ 
+  alert('Fitur ganti avatar (dalam pengembangan)'); 
+}
+
+// Logout
+function logout(){ 
+  localStorage.removeItem('userEmail'); 
+  window.location.href='login.html'; 
+}
+
+// ===== ATTACHMENT MENU FUNCTIONS =====
+function openAttachmentMenu() {
+  document.getElementById('attachmentMenu').style.display = 'flex';
+  document.getElementById('messageInput').blur();
+}
+
+function closeAttachmentMenu(event) {
+  if (event.target.id === 'attachmentMenu') {
+    document.getElementById('attachmentMenu').style.display = 'none';
+  }
+}
+
+function selectAttachment(type) {
+  console.log(`Attachment selected: ${type}`);
+  
+  // Mock actions untuk setiap tipe attachment
+  const actions = {
+    'document': () => attachDocument(),
+    'camera': () => openCamera(),
+    'gallery': () => openGallery(),
+    'audio': () => recordAudio(),
+    'account': () => openProfile(),
+    'catalog': () => openCatalog(),
+    'quick_reply': () => useQuickReply(),
+    'contact': () => shareContact(),
+    'poll': () => createPoll(),
+    'event': () => createEvent()
+  };
+  
+  if (actions[type]) actions[type]();
+  
+  // Tutup menu setelah seleksi
+  document.getElementById('attachmentMenu').style.display = 'none';
+}
+
+// Close menu dengan Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('attachmentMenu').style.display === 'flex') {
+    document.getElementById('attachmentMenu').style.display = 'none';
+  }
+});
+
+// ===== ATTACHMENT FUNCTIONS =====
+function attachDocument() {
+  const msg = {
+    from: 'me',
+    text: '📄 document.pdf (2.4 MB)',
+    time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    read: false,
+    status: 'sent'
+  };
+  
+  if (!mockMessages[roomId]) mockMessages[roomId] = [];
+  mockMessages[roomId].push(msg);
+  renderMessages();
+}
+
+function openCamera() {
+  alert('Membuka kamera... (mock)');
+}
+
+function openGallery() {
+  const msg = {
+    from: 'me',
+    text: '🖼️ image.jpg (1.2 MB)',
+    time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    read: false,
+    status: 'sent'
+  };
+  
+  if (!mockMessages[roomId]) mockMessages[roomId] = [];
+  mockMessages[roomId].push(msg);
+  renderMessages();
+}
+
+function recordAudio() {
+  const msg = {
+    from: 'me',
+    text: '🎤 Pesan suara (0:15)',
+    time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    read: false,
+    status: 'sent'
+  };
+  
+  if (!mockMessages[roomId]) mockMessages[roomId] = [];
+  mockMessages[roomId].push(msg);
+  renderMessages();
+}
+
+function openCatalog() {
+  const msg = {
+    from: 'me',
+    text: '📋 Lihat katalog produk kami: https://catalog.readtalk.com',
+    time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    read: false,
+    status: 'sent'
+  };
+  
+  if (!mockMessages[roomId]) mockMessages[roomId] = [];
+  mockMessages[roomId].push(msg);
+  renderMessages();
+}
+
+function useQuickReply() {
+  const replies = [
+    "Ya",
+    "Tidak",
+    "Mungkin nanti",
+    "Saya konfirmasi dulu",
+    "Oke, deal!"
+  ];
+  
+  const randomReply = replies[Math.floor(Math.random() * replies.length)];
+  input.value = randomReply;
+  input.focus();
+}
+
+function shareContact() {
+  const msg = {
+    from: 'me',
+    text: '👤 Kontak: John Doe\n+62 812-3456-7890',
+    time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    read: false,
+    status: 'sent'
+  };
+  
+  if (!mockMessages[roomId]) mockMessages[roomId] = [];
+  mockMessages[roomId].push(msg);
+  renderMessages();
+}
+
+function createPoll() {
+  const msg = {
+    from: 'me',
+    text: '📊 Poll: Bagaimana READTalk?\n• Sangat baik ⭐⭐⭐⭐⭐\n• Baik ⭐⭐⭐⭐\n• Cukup ⭐⭐⭐',
+    time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    read: false,
+    status: 'sent'
+  };
+  
+  if (!mockMessages[roomId]) mockMessages[roomId] = [];
+  mockMessages[roomId].push(msg);
+  renderMessages();
+}
+
+function createEvent() {
+  const msg = {
+    from: 'me',
+    text: '📅 Meeting READTalk\n📌 Jumat, 20 Des 2024\n🕐 14.00 - 15.00 WIB\n💻 Zoom link: meet.readtalk.com',
+    time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    read: false,
+    status: 'sent'
+  };
+  
+  if (!mockMessages[roomId]) mockMessages[roomId] = [];
+  mockMessages[roomId].push(msg);
+  renderMessages();
+}
+
+// Auto-scroll on resize
+window.addEventListener('resize', ()=>{ 
+  chatBox.scrollTop = chatBox.scrollHeight; 
+});
+</script>
+</body>
+</html>
