@@ -1,0 +1,172 @@
+/* === CSS CUSTOM PROPERTIES (DESIGN TOKENS) === */
+:root {
+    /* WhatsApp Colors */
+    --wa-green: #075E54;
+    --wa-green-light: #128C7E;
+    --wa-green-bright: #25D366;
+    --wa-teal: #34B7F1;
+    --wa-background: #ECE5DD;
+    --wa-surface: #FFFFFF;
+    --wa-text: #000000;
+    --wa-text-secondary: #667781;
+    --wa-border: #E0E0E0;
+    --wa-unread: #25D366;
+    
+    /* Spacing System */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 12px;
+    --space-lg: 16px;
+    --space-xl: 24px;
+    --space-xxl: 32px;
+    
+    /* Typography */
+    --font-size-xs: 12px;
+    --font-size-sm: 14px;
+    --font-size-md: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 22px;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 600;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+    
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-full: 9999px;
+    
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+    --transition-slow: 350ms ease;
+    
+    /* Platform Detection */
+    --is-mobile: 1;
+    --is-desktop: 0;
+    --is-touch: 1;
+}
+
+/* === BASE RESET === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--wa-background);
+    color: var(--wa-text);
+    overflow: hidden;
+    height: 100vh;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+/* === PWA INSTALL PROMPT === */
+.pwa-prompt {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--wa-surface);
+    border-top: 1px solid var(--wa-border);
+    padding: var(--space-md);
+    z-index: 1000;
+    animation: slideUp 300ms ease;
+}
+
+.pwa-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.pwa-content span {
+    font-size: 24px;
+}
+
+.pwa-content div {
+    flex: 1;
+}
+
+.pwa-content button {
+    background: var(--wa-green);
+    color: white;
+    border: none;
+    padding: var(--space-sm) var(--space-lg);
+    border-radius: var(--radius-sm);
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+}
+
+/* === APP CONTAINER === */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: relative;
+}
+
+/* === ADAPTIVE MEDIA QUERIES === */
+@media (min-width: 768px) {
+    :root {
+        --is-mobile: 0;
+        --is-desktop: 1;
+        --is-touch: 0;
+    }
+    
+    .app-container {
+        flex-direction: row;
+    }
+    
+    /* Desktop specific */
+    body {
+        overflow: auto;
+    }
+}
+
+@media (pointer: fine) {
+    :root {
+        --is-touch: 0;
+    }
+}
+
+/* === ANIMATIONS === */
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* === UTILITY CLASSES === */
+.hidden { display: none !important; }
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-sm { gap: var(--space-sm); }
+.gap-md { gap: var(--space-md); }
+.p-md { padding: var(--space-md); }
+.mt-md { margin-top: var(--space-md); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-secondary { color: var(--wa-text-secondary); }
+.bg-surface { background: var(--wa-surface); }
+.rounded { border-radius: var(--radius-sm); }
+.shadow { box-shadow: var(--shadow-sm); }
