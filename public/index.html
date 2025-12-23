@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>WhatsApp</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#075E54">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="app.css">
+    
+    <!-- Icons -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💚</text></svg>">
+</head>
+<body>
+    <!-- PWA Install Prompt (Mobile) -->
+    <div id="installPrompt" class="pwa-prompt" hidden>
+        <div class="pwa-content">
+            <span>📱</span>
+            <div>
+                <strong>Install WhatsApp</strong>
+                <small>Add to home screen for better experience</small>
+            </div>
+            <button onclick="installPWA()">Install</button>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <div class="app-container" id="appContainer">
+        <!-- Header (Platform Adaptive) -->
+        <wa-header></wa-header>
+        
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Chat List -->
+            <wa-chat-list></wa-chat-list>
+            
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" hidden>
+                <div class="empty-icon">💬</div>
+                <h3>No chats yet</h3>
+                <p>Start a conversation by tapping the + button</p>
+            </div>
+        </main>
+        
+        <!-- Bottom Navigation (Mobile) -->
+        <wa-bottom-nav></wa-bottom-nav>
+        
+        <!-- Sidebar (Desktop) -->
+        <wa-sidebar></wa-sidebar>
+        
+        <!-- FAB -->
+        <wa-fab></wa-fab>
+    </div>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+    
+    <!-- Web Components & App Logic -->
+    <script src="components.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+</body>
+</html>
