@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="id" class="light-theme">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WhatsApp</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
+    <meta name="theme-color" content="#008069" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#111B21" media="(prefers-color-scheme: dark)">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WhatsApp">
+    
+    <!-- Splash Screens (iOS) -->
+    <link rel="apple-touch-startup-image" href="icons/splash-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="icons/splash-750x1294.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
+    <link rel="apple-touch-startup-image" href="icons/splash-1242x2148.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+    <link rel="apple-touch-icon" href="icons/icon-180.png">
+    <link rel="mask-icon" href="icons/icon-mask.svg" color="#008069">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="dark.css" media="(prefers-color-scheme: dark)">
+    <link rel="stylesheet" href="splash.css" id="splash-style">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="components.js" as="script">
+    <link rel="preload" href="app.js" as="script">
+</head>
+<body>
+    <!-- Splash Screen (WA Green with Logo) -->
+    <div id="splashScreen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">
+                <svg width="80" height="80" viewBox="0 0 24 24">
+                    <path fill="#ffffff" d="M17.6 6.3A7.8 7.8 0 0 0 12 4a8 8 0 0 0-8 8c0 1.4.4 2.8 1 4l-1.4 4.2 4.3-1.1c1.2.6 2.5 1 3.9 1a8 8 0 0 0 8-8c0-2.2-.9-4.2-2.4-5.7z"/>
+                    <path fill="#ffffff" d="M12 20.5a8.5 8.5 0 0 1-4.5-1.3l-3.3.8.9-3.2A8.5 8.5 0 1 1 12 20.5zm4.7-6.5l-1.2-.7-1.4.7-.3-1.6 1.2-.7h1.5l.3-1.6.3 1.6h1.5l1.2.7-.3 1.6-1.4-.7-1.2.7z"/>
+                </svg>
+            </div>
+            <div class="splash-text">WhatsApp</div>
+            <div class="splash-progress">
+                <div class="splash-progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PWA Install Prompt (Material Design) -->
+    <div id="installPrompt" class="pwa-prompt" hidden>
+        <div class="pwa-card">
+            <div class="pwa-icon">💚</div>
+            <div class="pwa-details">
+                <h3>Install WhatsApp</h3>
+                <p>Get app-like experience with home screen icon</p>
+            </div>
+            <div class="pwa-actions">
+                <button class="pwa-secondary" onclick="dismissInstall()">Not now</button>
+                <button class="pwa-primary" onclick="installPWA()">Install</button>
+            </div>
+            <button class="pwa-close" onclick="dismissInstall()">×</button>
+        </div>
+    </div>
+
+    <!-- Network Status Banner -->
+    <div id="networkStatus" class="network-status" hidden>
+        <div class="network-content">
+            <span class="network-icon">📶</span>
+            <span class="network-text">Connecting...</span>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="app-container" id="appContainer" hidden>
+        <!-- Status Bar (Dynamic Color) -->
+        <div class="status-bar" id="statusBar"></div>
+        
+        <!-- Header -->
+        <wa-header></wa-header>
+        
+        <!-- Tab Bar -->
+        <wa-tab-bar></wa-tab-bar>
+        
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Chats Tab -->
+            <div class="tab-content active" data-tab="chats">
+                <wa-chat-list></wa-chat-list>
+            </div>
+            
+            <!-- Status Tab -->
+            <div class="tab-content" data-tab="status">
+                <wa-status-list></wa-status-list>
+            </div>
+            
+            <!-- Calls Tab -->
+            <div class="tab-content" data-tab="calls">
+                <wa-calls-list></wa-calls-list>
+            </div>
+            
+            <!-- Selection Toolbar (Multi-select) -->
+            <div id="selectionToolbar" class="selection-toolbar" hidden>
+                <div class="selection-count">0 selected</div>
+                <div class="selection-actions">
+                    <button class="selection-btn" data-action="archive">Archive</button>
+                    <button class="selection-btn" data-action="delete">Delete</button>
+                    <button class="selection-btn" data-action="mute">Mute</button>
+                    <button class="selection-btn" data-action="pin">Pin</button>
+                    <button class="selection-btn selection-close" data-action="close">×</button>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Bottom Navigation (Mobile) -->
+        <wa-bottom-nav></wa-bottom-nav>
+        
+        <!-- Sidebar (Desktop) -->
+        <wa-sidebar></wa-sidebar>
+        
+        <!-- FAB with Context Menu -->
+        <wa-fab></wa-fab>
+        <div id="fabMenu" class="fab-menu" hidden>
+            <button class="fab-menu-item" data-action="new-chat">
+                <span class="fab-icon">💬</span>
+                <span>New chat</span>
+            </button>
+            <button class="fab-menu-item" data-action="new-group">
+                <span class="fab-icon">👥</span>
+                <span>New group</span>
+            </button>
+            <button class="fab-menu-item" data-action="new-community">
+                <span class="fab-icon">🏠</span>
+                <span>New community</span>
+            </button>
+            <button class="fab-menu-item" data-action="scan-qr">
+                <span class="fab-icon">📷</span>
+                <span>Scan QR code</span>
+            </button>
+        </div>
+        
+        <!-- Search Overlay -->
+        <div id="searchOverlay" class="search-overlay" hidden>
+            <div class="search-header">
+                <button class="search-back" onclick="closeSearch()">←</button>
+                <div class="search-input-container">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search...">
+                    <button class="search-clear" hidden>×</button>
+                </div>
+            </div>
+            <div class="search-results" id="searchResults">
+                <!-- Search results populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Worker Registration -->
+    <script>
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js', { scope: './' })
+                .then(reg => console.log('SW registered:', reg))
+                .catch(err => console.log('SW registration failed:', err));
+        }
+        
+        // Hide splash screen after load
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('splashScreen').style.opacity = '0';
+                document.getElementById('appContainer').hidden = false;
+                setTimeout(() => {
+                    document.getElementById('splashScreen').style.display = 'none';
+                }, 300);
+            }, 1500);
+        });
+    </script>
+    
+    <!-- Web Components & App Logic -->
+    <script src="components.js" type="module"></script>
+    <script src="app.js" type="module"></script>
+    <script src="search.js" type="module"></script>
+    <script src="gestures.js" type="module"></script>
+    <script src="status.js" type="module"></script>
+    <script src="calls.js" type="module"></script>
+    <script src="notifications.js" type="module"></script>
+</body>
+</html>
