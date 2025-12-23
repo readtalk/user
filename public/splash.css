@@ -1,0 +1,483 @@
+/* === SPLASH SCREEN STYLES === */
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #005C4B 0%, #008069 50%, #00A884 100%);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
+}
+
+.splash-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.splash-content {
+    text-align: center;
+    animation: splashContentFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+/* WhatsApp Logo Animation */
+.splash-logo {
+    margin-bottom: 24px;
+    animation: 
+        logoFloat 2s ease-in-out infinite,
+        logoGlow 2s ease-in-out infinite alternate;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+}
+
+.splash-logo svg {
+    width: 80px;
+    height: 80px;
+    animation: logoSpin 20s linear infinite;
+}
+
+/* Splash Text Styling */
+.splash-text {
+    color: white;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 32px;
+    opacity: 0.9;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    animation: textFadeIn 1s ease-out 0.3s both;
+}
+
+/* Progress Bar Container */
+.splash-progress {
+    width: 140px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 0 auto;
+    position: relative;
+    animation: progressContainerFadeIn 0.8s ease-out 0.6s both;
+}
+
+/* Progress Bar Animation */
+.splash-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, 
+        rgba(255, 255, 255, 0.8) 0%, 
+        rgba(255, 255, 255, 1) 50%, 
+        rgba(255, 255, 255, 0.8) 100%);
+    border-radius: 2px;
+    animation: 
+        progressBarFill 1.5s ease-in-out infinite,
+        progressBarShimmer 2s ease-in-out infinite;
+    transform-origin: left;
+    will-change: transform;
+}
+
+/* Progress Bar Glow Effect */
+.splash-progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.1) 50%, 
+        transparent 100%);
+    animation: progressGlow 2s ease-in-out infinite;
+    border-radius: 2px;
+}
+
+/* Platform-Specific Splash Screens */
+/* iOS Notch Devices */
+@media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+    .splash-content {
+        padding-top: 44px; /* Notch height */
+    }
+}
+
+/* iPhone 14/15 Pro Max */
+@media only screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) {
+    .splash-content {
+        padding-top: 47px; /* Dynamic Island area */
+    }
+}
+
+/* Android Status Bar Area */
+.splash-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top, 0);
+    background: #00453A;
+}
+
+/* Loading Dots (Alternative Animation) */
+.splash-loading-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.splash-dot {
+    width: 8px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    animation: dotPulse 1.4s ease-in-out infinite;
+}
+
+.splash-dot:nth-child(1) { animation-delay: 0s; }
+.splash-dot:nth-child(2) { animation-delay: 0.2s; }
+.splash-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* Connection Status in Splash */
+.splash-status {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    animation: statusFadeIn 1s ease-out 1s both;
+}
+
+/* Loading Percentage (Optional) */
+.splash-percentage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 48px;
+    font-weight: 300;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* App Version Info */
+.splash-version {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 11px;
+    font-family: monospace;
+}
+
+/* === ANIMATIONS === */
+
+/* Content Fade In */
+@keyframes splashContentFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* Logo Floating Effect */
+@keyframes logoFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Logo Glow Effect */
+@keyframes logoGlow {
+    0% {
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+    }
+    100% {
+        filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.3));
+    }
+}
+
+/* Logo Spin (Slow rotation) */
+@keyframes logoSpin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Text Fade In */
+@keyframes textFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 0.9;
+        transform: translateY(0);
+    }
+}
+
+/* Progress Bar Fill Animation */
+@keyframes progressBarFill {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(300%);
+    }
+}
+
+/* Progress Bar Shimmer */
+@keyframes progressBarShimmer {
+    0%, 100% {
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Progress Container Fade In */
+@keyframes progressContainerFadeIn {
+    from {
+        opacity: 0;
+        transform: scaleX(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scaleX(1);
+    }
+}
+
+/* Progress Glow Effect */
+@keyframes progressGlow {
+    0%, 100% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* Loading Dots Animation */
+@keyframes dotPulse {
+    0%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Status Text Fade In */
+@keyframes statusFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 0.7;
+        transform: translateY(0);
+    }
+}
+
+/* === REDUCED MOTION SUPPORT === */
+@media (prefers-reduced-motion: reduce) {
+    .splash-logo,
+    .splash-progress-bar,
+    .splash-dot,
+    .splash-logo svg {
+        animation: none !important;
+    }
+    
+    .splash-progress-bar {
+        width: 100%;
+        animation: none;
+        background: rgba(255, 255, 255, 0.6);
+    }
+    
+    .splash-content {
+        animation: none;
+    }
+    
+    .splash-text {
+        animation: none;
+        opacity: 0.9;
+    }
+    
+    .splash-progress {
+        animation: none;
+        opacity: 1;
+    }
+    
+    .splash-progress::after {
+        display: none;
+    }
+}
+
+/* === DARK MODE SPLASH (Auto-detected) === */
+@media (prefers-color-scheme: dark) {
+    .splash-screen {
+        background: linear-gradient(135deg, #0C151B 0%, #111B21 50%, #1F2C34 100%);
+    }
+    
+    .splash-logo svg path {
+        fill: #00A884;
+    }
+    
+    .splash-progress {
+        background: rgba(0, 168, 132, 0.15);
+    }
+    
+    .splash-progress-bar {
+        background: linear-gradient(90deg, 
+            rgba(0, 168, 132, 0.6) 0%, 
+            rgba(0, 168, 132, 1) 50%, 
+            rgba(0, 168, 132, 0.6) 100%);
+    }
+}
+
+/* === HIGH CONTRAST MODE === */
+@media (prefers-contrast: high) {
+    .splash-screen {
+        background: #005C4B;
+    }
+    
+    .splash-progress {
+        background: white;
+        border: 1px solid black;
+    }
+    
+    .splash-progress-bar {
+        background: black;
+    }
+}
+
+/* === LOADING STATES FOR APP CONTENT === */
+.app-loading {
+    position: relative;
+}
+
+.app-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: loadingShimmer 1.5s ease-in-out infinite;
+    z-index: 1;
+    pointer-events: none;
+}
+
+@keyframes loadingShimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* === SPLASH SCREEN RESPONSIVE BREAKPOINTS === */
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .splash-logo svg {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .splash-text {
+        font-size: 32px;
+    }
+    
+    .splash-progress {
+        width: 200px;
+        height: 5px;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+    .splash-screen {
+        max-width: 800px;
+        max-height: 600px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    
+    .splash-logo svg {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .splash-text {
+        font-size: 36px;
+    }
+    
+    .splash-progress {
+        width: 300px;
+        height: 6px;
+    }
+}
+
+/* Landscape Orientation */
+@media (orientation: landscape) and (max-height: 600px) {
+    .splash-content {
+        transform: scale(0.8);
+    }
+    
+    .splash-text {
+        margin-bottom: 16px;
+    }
+    
+    .splash-status {
+        bottom: 20px;
+    }
+}
+
+/* Foldable Devices */
+@media (screen-spanning: single-fold-vertical) {
+    .splash-screen {
+        width: 100vw;
+        height: 100vh;
+    }
+}
+
+/* Print Styles (Hide Splash) */
+@media print {
+    .splash-screen {
+        display: none !important;
+    }
+}
