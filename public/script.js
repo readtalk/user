@@ -1,21 +1,17 @@
-// ===== DATA STRUCTURE =====
-// Helper: email → name + username
-function emailToUser(email) {
+// ===== DATA STRUCTURE (SAMA DENGAN chat.html) =====
+function emailToUser(email){
     const [name] = email.split('@');
     const displayName = name.split('.').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
     return { name: displayName, username: '@' + name, email: email };
 }
 
-// Current user
 const userEmail = localStorage.getItem('userEmail') || 'john.doe@example.com';
 const user = emailToUser(userEmail);
 
-// Update header user info
 document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('').substring(0, 2);
 document.getElementById('userName').textContent = user.name;
 document.getElementById('userUsername').textContent = user.username;
 
-// Mock room data
 let rooms = [
     {
         id: 'self',
@@ -91,33 +87,27 @@ let rooms = [
     }
 ];
 
-// Sort by latest message (WhatsApp style)
 function sortRooms() {
     const timeOrder = { 'Hari ini': 0, 'Kemarin': 1 };
     return rooms.sort((a, b) => {
-        // Unread first
         if (a.unread > 0 && b.unread === 0) return -1;
         if (a.unread === 0 && b.unread > 0) return 1;
         
-        // Then by time
         const timeA = timeOrder[a.time] !== undefined ? timeOrder[a.time] : 100;
         const timeB = timeOrder[b.time] !== undefined ? timeOrder[b.time] : 100;
         
         if (timeA !== timeB) return timeA - timeB;
         
-        // Then alphabetical
         return a.name.localeCompare(b.name);
     });
 }
 
-// DOM Elements
 const roomList = document.getElementById('roomList');
 const roomListContainer = document.getElementById('roomListContainer');
 const emptyState = document.getElementById('emptyState');
 const archivedHeader = document.getElementById('archivedHeader');
 const searchInput = document.getElementById('searchInput');
 
-// Render rooms dengan WhatsApp property
 function renderRooms(filter = '') {
     const filteredRooms = rooms.filter(room => 
         room.name.toLowerCase().includes(filter.toLowerCase()) ||
@@ -130,7 +120,6 @@ function renderRooms(filter = '') {
     
     roomList.innerHTML = '';
     
-    // Show/hide empty state
     if (filteredRooms.length === 0) {
         emptyState.style.display = 'flex';
         archivedHeader.style.display = 'none';
@@ -139,13 +128,11 @@ function renderRooms(filter = '') {
         emptyState.style.display = 'none';
     }
     
-    // Render active rooms
     activeRooms.forEach(room => {
         const li = createRoomElement(room);
         roomList.appendChild(li);
     });
     
-    // Render archived rooms if any
     if (archivedRooms.length > 0) {
         archivedHeader.style.display = 'block';
         archivedRooms.forEach(room => {
@@ -157,15 +144,12 @@ function renderRooms(filter = '') {
     }
 }
 
-// Create room element dengan WhatsApp styling
 function createRoomElement(room) {
     const li = document.createElement('li');
     li.className = 'room' + (room.unread > 0 ? ' unread' : '');
     
-    // Avatar initials
     const avatarText = room.avatar || room.name.split(' ').map(n => n[0]).join('').substring(0, 2);
     
-    // Time format WhatsApp style
     const timeText = formatTime(room.time);
     
     li.innerHTML = `
@@ -178,7 +162,7 @@ function createRoomElement(room) {
                 <div class="room-name">
                     ${room.name} 
                     <span style="font-weight:400;color:var(--whatsapp-text-secondary);">${room.username}</span>
-                    ${room.muted ? ' <i class="fas fa-volume-mute" style="font-size:12px;color:#888;"></i>' : ''}
+                    ${room.muted ? ' <span style="font-size:12px;color:#888;">🔇</span>' : ''}
                 </div>
                 <div class="room-time">${timeText}</div>
             </div>
@@ -187,26 +171,23 @@ function createRoomElement(room) {
             </div>
         </div>
         ${room.unread > 0 ? `<div class="badge">${room.unread}</div>` : ''}
-        <div class="options" onclick="toggleDropdown(event, '${room.id}')">
-            <i class="fas fa-ellipsis-v"></i>
-        </div>
+        <div class="options" onclick="toggleDropdown(event, '${room.id}')">⋮</div>
         <div class="dropdown" id="dropdown-${room.id}">
             <button onclick="viewProfile(event, '${room.id}')">
-                <i class="fas fa-user"></i> View Profile
+                <span>👤</span> View Profile
             </button>
             <button onclick="toggleMute(event, '${room.id}')">
-                <i class="fas ${room.muted ? 'fa-volume-up' : 'fa-volume-mute'}"></i> ${room.muted ? 'Unmute' : 'Mute'}
+                <span>${room.muted ? '🔊' : '🔇'}</span> ${room.muted ? 'Unmute' : 'Mute'}
             </button>
             <button onclick="archiveChat(event, '${room.id}')">
-                <i class="fas ${room.archived ? 'fa-folder-open' : 'fa-archive'}"></i> ${room.archived ? 'Unarchive' : 'Archive'}
+                <span>${room.archived ? '📂' : '📁'}</span> ${room.archived ? 'Unarchive' : 'Archive'}
             </button>
             <button onclick="deleteChat(event, '${room.id}')" style="color:#e53935;">
-                <i class="fas fa-trash"></i> Delete Chat
+                <span>🗑️</span> Delete Chat
             </button>
         </div>
     `;
     
-    // Click to open chat
     li.addEventListener('click', (e) => {
         if (!e.target.closest('.options') && !e.target.closest('.dropdown')) {
             window.location.href = 'room.html?room=' + room.id;
@@ -216,7 +197,6 @@ function createRoomElement(room) {
     return li;
 }
 
-// Format time WhatsApp style
 function formatTime(timeStr) {
     const today = new Date();
     const yesterday = new Date(today);
@@ -227,12 +207,14 @@ function formatTime(timeStr) {
     } else if (timeStr === 'Kemarin') {
         return 'Kemarin';
     } else if (timeStr.includes('/')) {
-        return timeStr; // Already formatted as DD/MM
+        return timeStr;
     }
     return timeStr;
 }
 
-// ===== SEARCH FUNCTIONALITY =====
+rooms = sortRooms();
+renderRooms();
+
 searchInput.addEventListener('input', (e) => {
     renderRooms(e.target.value);
 });
@@ -245,11 +227,9 @@ searchInput.addEventListener('blur', () => {
     searchInput.parentElement.style.boxShadow = 'none';
 });
 
-// ===== DROPDOWN FUNCTIONS =====
 function toggleDropdown(event, roomId) {
     event.stopPropagation();
     
-    // Close all other dropdowns
     document.querySelectorAll('.dropdown').forEach(dropdown => {
         if (dropdown.id !== `dropdown-${roomId}`) {
             dropdown.style.display = 'none';
@@ -259,21 +239,18 @@ function toggleDropdown(event, roomId) {
     const dropdown = document.getElementById(`dropdown-${roomId}`);
     dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
     
-    // Position adjustment
     const rect = dropdown.getBoundingClientRect();
     if (rect.bottom > window.innerHeight) {
         dropdown.style.top = `${rect.top - dropdown.offsetHeight - 10}px`;
     }
 }
 
-// Close dropdowns when clicking outside
 document.addEventListener('click', () => {
     document.querySelectorAll('.dropdown').forEach(dropdown => {
         dropdown.style.display = 'none';
     });
 });
 
-// ===== ROOM ACTIONS =====
 function viewProfile(event, roomId) {
     event.stopPropagation();
     const room = rooms.find(r => r.id === roomId);
@@ -309,7 +286,6 @@ function deleteChat(event, roomId) {
     document.getElementById(`dropdown-${roomId}`).style.display = 'none';
 }
 
-// ===== HEADER ACTIONS =====
 function openCamera() {
     alert('Kamera (dalam pengembangan)');
 }
@@ -344,31 +320,25 @@ function createNewChat() {
     openNewChat();
 }
 
-// ===== KEYBOARD SHORTCUTS =====
 document.addEventListener('keydown', (e) => {
-    // Ctrl/Cmd + K untuk focus search
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
         searchInput.focus();
     }
     
-    // Escape untuk clear search
     if (e.key === 'Escape' && document.activeElement === searchInput) {
         searchInput.value = '';
         renderRooms('');
     }
 });
 
-// Auto-refresh setiap 30 detik (simulasi update)
 setInterval(() => {
-    // Simulate random online status changes
     rooms.forEach(room => {
         if (room.id !== 'self' && Math.random() > 0.7) {
             room.online = !room.online;
         }
     });
     
-    // Update display for online status
     document.querySelectorAll('.room').forEach((roomEl, index) => {
         const room = rooms[index];
         if (room) {
@@ -380,12 +350,6 @@ setInterval(() => {
     });
 }, 30000);
 
-// ===== INITIAL RENDER =====
-// Initial sort and render
-rooms = sortRooms();
-renderRooms();
-
-// Expose functions to global scope
 window.toggleDropdown = toggleDropdown;
 window.viewProfile = viewProfile;
 window.toggleMute = toggleMute;
