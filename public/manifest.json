@@ -1,27 +1,356 @@
 {
   "name": "WhatsApp",
   "short_name": "WhatsApp",
-  "description": "WhatsApp Web PWA",
+  "description": "Stay connected with friends and family. WhatsApp from Meta.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#075E54",
-  "theme_color": "#075E54",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "scope": "/",
+  "id": "/",
+  
+  "background_color": "#008069",
+  "theme_color": "#008069",
+  
   "orientation": "portrait-primary",
+  "orientation_lock": "portrait",
+  
+  "categories": [
+    "social",
+    "communication",
+    "utilities",
+    "productivity"
+  ],
+  
+  "dir": "auto",
+  "lang": "id-ID",
+  "prefer_related_applications": false,
+  
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💚</text></svg>",
+      "src": "/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-mask.svg",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ],
-  "categories": ["social", "communication"],
+  
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile-chats.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Chats list screen"
+    },
+    {
+      "src": "/screenshots/mobile-chat.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Chat conversation screen"
+    },
+    {
+      "src": "/screenshots/tablet.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Tablet view with sidebar"
+    }
+  ],
+  
   "shortcuts": [
     {
       "name": "New Chat",
       "short_name": "Chat",
-      "description": "Start a new chat",
-      "url": "/?new",
-      "icons": [{ "src": "/icon-96.png", "sizes": "96x96" }]
+      "description": "Start a new conversation",
+      "url": "/?new-chat",
+      "icons": [
+        {
+          "src": "/icons/shortcut-chat-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "New Group",
+      "short_name": "Group",
+      "description": "Create a new group chat",
+      "url": "/?new-group",
+      "icons": [
+        {
+          "src": "/icons/shortcut-group-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Camera",
+      "short_name": "Camera",
+      "description": "Open camera to take photo or video",
+      "url": "/?camera",
+      "icons": [
+        {
+          "src": "/icons/shortcut-camera-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Status",
+      "short_name": "Status",
+      "description": "View status updates",
+      "url": "/?status",
+      "icons": [
+        {
+          "src": "/icons/shortcut-status-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Calls",
+      "short_name": "Calls",
+      "description": "View call history",
+      "url": "/?calls",
+      "icons": [
+        {
+          "src": "/icons/shortcut-calls-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  
+  "protocol_handlers": [
+    {
+      "protocol": "web+whatsapp",
+      "url": "/?handle=%s"
+    },
+    {
+      "protocol": "whatsapp",
+      "url": "/?handle=%s"
+    }
+  ],
+  
+  "share_target": {
+    "action": "/?share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "images",
+          "accept": ["image/*"]
+        },
+        {
+          "name": "videos",
+          "accept": ["video/*"]
+        },
+        {
+          "name": "documents",
+          "accept": [".pdf", ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".txt"]
+        }
+      ]
+    }
+  },
+  
+  "file_handlers": [
+    {
+      "action": "/?open-file",
+      "accept": {
+        "application/pdf": [".pdf"],
+        "application/msword": [".doc", ".docx"],
+        "application/vnd.ms-excel": [".xls", ".xlsx"],
+        "application/vnd.ms-powerpoint": [".ppt", ".pptx"],
+        "text/plain": [".txt"],
+        "image/*": [".jpg", ".jpeg", ".png", ".gif", ".webp"],
+        "video/*": [".mp4", ".avi", ".mov", ".mkv"],
+        "audio/*": [".mp3", ".wav", ".ogg", ".m4a"]
+      }
+    }
+  ],
+  
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  
+  "edge_side_panel": {
+    "preferred_width": 320
+  },
+  
+  "permissions": [
+    "notifications",
+    "background-sync",
+    "clipboard-write",
+    "clipboard-read",
+    "geolocation",
+    "camera",
+    "microphone"
+  ],
+  
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.whatsapp",
+      "id": "com.whatsapp"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/app/whatsapp-messenger/id310633997"
+    }
+  ],
+  
+  "splash_screens": [
+    {
+      "src": "/icons/splash-640x1136.png",
+      "sizes": "640x1136",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/icons/splash-750x1294.png",
+      "sizes": "750x1294",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/icons/splash-828x1792.png",
+      "sizes": "828x1792",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/icons/splash-1125x2436.png",
+      "sizes": "1125x2436",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/icons/splash-1242x2208.png",
+      "sizes": "1242x2208",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/icons/splash-1242x2688.png",
+      "sizes": "1242x2688",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/icons/splash-1536x2048.png",
+      "sizes": "1536x2048",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/icons/splash-1668x2224.png",
+      "sizes": "1668x2224",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/icons/splash-2048x2732.png",
+      "sizes": "2048x2732",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  
+  "features": [
+    "Cross Platform",
+    "End-to-End Encryption",
+    "Group Chats",
+    "Voice & Video Calls",
+    "Status Updates",
+    "Media Sharing",
+    "Document Sharing",
+    "Location Sharing",
+    "Voice Messages"
+  ],
+  
+  "iarc_rating_id": "e10b5c50-7e56-4e2a-bf10-f4c8b357b123",
+  
+  "version": "2.0.0",
+  
+  "capture_links": "new-client",
+  
+  "display_quality": "high",
+  
+  "edge_progressive_web_app": {
+    "navigation_scope": "/"
+  },
+  
+  "note_taking": {
+    "new_note_url": "/?new-note"
+  },
+  
+  "widgets": [
+    {
+      "name": "WhatsApp Quick Chat",
+      "tag": "quick-chat",
+      "ms_ac_template": "QuickChatWidget",
+      "url": "/widgets/quick-chat",
+      "sizes": ["small", "medium"],
+      "short_name": "Chat",
+      "description": "Quick access to recent chats"
     }
   ]
 }
